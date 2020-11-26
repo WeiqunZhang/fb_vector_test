@@ -12,11 +12,13 @@ int main(int argc, char* argv[])
     {
         BL_PROFILE("main");
 
+        int test_vector = 1;
         IntVect n_cell{AMREX_D_DECL(64,64,64)};
         {
             Vector<int> n_cell_v;
             ParmParse pp;
             pp.queryarr("n_cell", n_cell_v);
+            pp.query("test_vector", test_vector);
         }
 
         Box domain(IntVect(0), n_cell-1);
@@ -51,9 +53,14 @@ int main(int argc, char* argv[])
 
         FillBoundary(amrex::GetVecOfPtrs(mf), Periodicity(n_cell));
         ParallelDescriptor::Barrier();
-        {
+        if (test_vector) {
             BL_PROFILE("FB-vector");
             FillBoundary(amrex::GetVecOfPtrs(mf), Periodicity(n_cell));
+        } else {
+            BL_PROFILE("FB-old");
+            for (int n = 0; n < mf.size(); ++n) {
+                mf[n].FillBoundary(Periodicity(n_cell));
+            }
         }
 
         for (int n = 0; n < mf.size(); ++n) {
