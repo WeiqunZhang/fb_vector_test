@@ -26,6 +26,13 @@ int main(int argc, char* argv[])
             BoxArray ba(domain);
             IntVect mgs(32);
             mgs[n % AMREX_SPACEDIM] = 16;
+            {
+                ParmParse pp;
+                int max_grid_size;
+                if (pp.query("max_grid_size", max_grid_size)) {
+                    mgs = IntVect{max_grid_size};
+                }
+            }
             ba.maxSize(mgs);
             ba.convert(IntVect::TheDimensionVector((n+1) % AMREX_SPACEDIM));
             DistributionMapping dm(ba);
