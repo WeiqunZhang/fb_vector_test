@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
         }
 
         FillBoundary(amrex::GetVecOfPtrs(mf), Periodicity(n_cell));
+        ParallelDescriptor::Barrier();
         {
             BL_PROFILE("FB-vector");
             FillBoundary(amrex::GetVecOfPtrs(mf), Periodicity(n_cell));
