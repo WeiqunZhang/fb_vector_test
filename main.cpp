@@ -18,7 +18,9 @@ int main(int argc, char* argv[])
         {
             Vector<int> n_cell_v;
             ParmParse pp;
-            pp.queryarr("n_cell", n_cell_v);
+            if (pp.queryarr("n_cell", n_cell_v)) {
+                n_cell = IntVect(AMREX_D_DECL(n_cell_v[0],n_cell_v[1],n_cell_v[2]));
+            }
             pp.query("test_vector", test_vector);
             pp.query("nghost", nghost);
         }
@@ -40,6 +42,11 @@ int main(int argc, char* argv[])
             ba.maxSize(mgs);
             ba.convert(IntVect::TheDimensionVector((n+1) % AMREX_SPACEDIM));
             DistributionMapping dm(ba);
+
+            amrex::Print() << "n = " << n << ": # of boxes is " << ba.size()
+                           << " the first box is " << ba[0]
+                           << " nghost is " << nghost << std::endl;
+
             mf[n].define(ba,dm,3,nghost);
             for (MFIter mfi(mf[n]); mfi.isValid(); ++mfi) {
                 Box const& bx = mfi.validbox();
