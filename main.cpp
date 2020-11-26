@@ -14,11 +14,13 @@ int main(int argc, char* argv[])
 
         int test_vector = 1;
         IntVect n_cell{AMREX_D_DECL(64,64,64)};
+        int nghost = 1;
         {
             Vector<int> n_cell_v;
             ParmParse pp;
             pp.queryarr("n_cell", n_cell_v);
             pp.query("test_vector", test_vector);
+            pp.query("nghost", nghost);
         }
 
         Box domain(IntVect(0), n_cell-1);
@@ -38,7 +40,7 @@ int main(int argc, char* argv[])
             ba.maxSize(mgs);
             ba.convert(IntVect::TheDimensionVector((n+1) % AMREX_SPACEDIM));
             DistributionMapping dm(ba);
-            mf[n].define(ba,dm,3,1);
+            mf[n].define(ba,dm,3,nghost);
             for (MFIter mfi(mf[n]); mfi.isValid(); ++mfi) {
                 Box const& bx = mfi.validbox();
                 Array4<int> const& fab = mf[n].array(mfi);
